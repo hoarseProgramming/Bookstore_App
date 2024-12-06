@@ -1,0 +1,80 @@
+﻿<UserControl x:Class="Bookstore_App.View.InventoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Bookstore_App.View"
+             mc:Ignorable="d" 
+             DataContext="{Binding InventoryViewModel}"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="boolToVisibilityConver" />
+    </UserControl.Resources>
+    
+    <Grid Visibility="{Binding IsInventoryMode, Converter={StaticResource boolToVisibilityConver}}">
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Stores" 
+                       Margin="0, 0, 0, 10"
+                       Padding="2, 0, 0, 0"
+                       FontWeight="DemiBold"
+                       FontSize="20"/>
+
+            <ListBox Grid.Row="1"
+                     ItemsSource="{Binding Stores}"
+                     DisplayMemberPath="StoreName"
+                     SelectionChanged="myListBox_SelectionChanged"/> 
+
+        </Grid>
+
+        <Grid Margin="10" 
+              Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Inventory Balance" 
+                       Margin="0, 0, 0, 10"
+                       Padding="2, 0, 0, 0"
+                       FontWeight="DemiBold"
+                       FontSize="20"/>  
+
+            <DataGrid Grid.Row="1"
+                      ItemsSource="{Binding InventoryBalances}"
+                      AutoGenerateColumns="False"
+                      Grid.Column="1"
+                      Background="White"
+                      CanUserResizeColumns="False"
+                      CanUserResizeRows="False"
+                      HeadersVisibility="Column"
+                      SelectionMode="Single"
+                      SelectionUnit="Cell">
+
+                <DataGrid.Columns>
+
+                    <DataGridTextColumn Header="Book title"
+                            Width="*"
+                            Binding="{Binding Book.Title}" />
+                    <DataGridTextColumn Header="Units in stock"
+                            Width="*"
+                            Binding="{Binding UnitsInStock}" />
+
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+
+        
+    </Grid>
+</UserControl>
