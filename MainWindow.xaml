@@ -17,7 +17,6 @@
         </Grid.RowDefinitions>
 
         <!--<views:MenuView x:Name="menuView"/>-->
-
         <view:InventoryView Grid.Row="1"/>
 
       
