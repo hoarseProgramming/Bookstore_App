@@ -13,15 +13,11 @@ namespace Bookstore_App.View
             InitializeComponent();
         }
 
-        private void TreeView_SelectedItemChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<object> e)
-        {
-            (DataContext as InventoryViewModel)?.GetAndSetInventoryBalances(e.NewValue as Store);
-        }
-
-        private void myListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void myListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var store = (sender as ListBox)?.SelectedItem as Store;
-            (DataContext as InventoryViewModel)?.GetAndSetInventoryBalances(store);
+            await (DataContext as InventoryViewModel)?.GetAndSetInventoryBalancesAsync(store);
+            await (DataContext as InventoryViewModel)?.GetAndSetBooks();
         }
     }
 }

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Bookstore_App.View"
+             xmlns:customElements="clr-namespace:Bookstore_App.View.CustomElements"
              mc:Ignorable="d" 
              DataContext="{Binding InventoryViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
@@ -18,6 +19,11 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+
+        </Grid.RowDefinitions>
 
         <Grid Margin="10">
             <Grid.RowDefinitions>
@@ -33,6 +39,7 @@
 
             <ListBox Grid.Row="1"
                      ItemsSource="{Binding Stores}"
+                     SelectedItem="{Binding ActiveStore}"
                      DisplayMemberPath="StoreName"
                      SelectionChanged="myListBox_SelectionChanged"/> 
 
@@ -45,34 +52,95 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <TextBlock Text="Inventory Balance" 
-                       Margin="0, 0, 0, 10"
-                       Padding="2, 0, 0, 0"
-                       FontWeight="DemiBold"
-                       FontSize="20"/>  
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Inventory Balance" 
+                           Margin="0, 0, 0, 10"
+                           Padding="2, 0, 0, 0"
+                           FontWeight="DemiBold"
+                           FontSize="20"
+                           HorizontalAlignment="Left"/>
+                <Button Grid.Column="1"
+                        Width="20"
+                        Height="20"
+                        HorizontalAlignment="Right"
+                        Margin="5"
+                        Command="{Binding ShouldOpenAddBookCommand}"/>
+                <Button Grid.Column="2"
+                        Width="20"
+                        Height="20"
+                        HorizontalAlignment="Right"
+                        Command="{Binding RemoveInventoryBalanceCommand}"/>
+            </Grid>
+            
 
-            <DataGrid Grid.Row="1"
+            <!--<DataGrid Grid.Row="1"
                       ItemsSource="{Binding InventoryBalances}"
+                      SelectedItem="{Binding ActiveInventoryBalance}"
                       AutoGenerateColumns="False"
                       Grid.Column="1"
+                      RowHeaderWidth="15"
                       Background="White"
                       CanUserResizeColumns="False"
                       CanUserResizeRows="False"
-                      HeadersVisibility="Column"
-                      SelectionMode="Single"
-                      SelectionUnit="Cell">
+                      CanUserAddRows="False"
+                      CanUserDeleteRows="False"
+                      SelectionUnit="CellOrRowHeader">
 
                 <DataGrid.Columns>
 
                     <DataGridTextColumn Header="Book title"
-                            Width="*"
-                            Binding="{Binding Book.Title}" />
-                    <DataGridTextColumn Header="Units in stock"
-                            Width="*"
-                            Binding="{Binding UnitsInStock}" />
+                                        Width="6*"
+                                        IsReadOnly="True"
+                                        Binding="{Binding Book.Title}" />
+                    <DataGridTextColumn Header="Author"
+                                        IsReadOnly="True"
+                                        Width="3*"
+                                        Binding="{Binding Book.ConcatenatedLastNames}" />
+                    <DataGridTextColumn Header="Units"
+                                        Width="*"
+                                        Binding="{Binding UnitsInStock}" />
 
                 </DataGrid.Columns>
-            </DataGrid>
+            </DataGrid>-->
+
+            <customElements:MultiSelectDataGrid Grid.Row="1"
+                                                ItemsSource="{Binding InventoryBalances}"
+                                                SelectedItemsList="{Binding SelectedInventoryBalances, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                AutoGenerateColumns="False"
+                                                Grid.Column="1"
+                                                RowHeaderWidth="15"
+                                                Background="White"
+                                                CanUserResizeColumns="False"
+                                                CanUserResizeRows="False"
+                                                CanUserAddRows="False"
+                                                CanUserDeleteRows="False"
+                                                SelectionUnit="FullRow" >
+                <customElements:MultiSelectDataGrid.Columns>
+                    <DataGridTextColumn Header="Book title"
+Width="6*"
+IsReadOnly="True"
+Binding="{Binding Book.Title}" />
+                    <DataGridTextColumn Header="Author"
+IsReadOnly="True"
+Width="3*"
+Binding="{Binding Book.ConcatenatedLastNames}" />
+                    <DataGridTextColumn Header="Units"
+Width="*"
+Binding="{Binding UnitsInStock}" />
+                </customElements:MultiSelectDataGrid.Columns>
+            </customElements:MultiSelectDataGrid>
+            <!--<DataGrid.Columns>
+
+                    
+
+                </DataGrid.Columns>-->
+
+
         </Grid>
 
         
