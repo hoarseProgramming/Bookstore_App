@@ -1,4 +1,4 @@
-﻿namespace Bookstore_App;
+﻿namespace Bookstore_App.Domain;
 
 public partial class InventoryBalance
 {
@@ -8,7 +8,7 @@ public partial class InventoryBalance
 
     public int UnitsInStock { get; set; }
 
-    public virtual Book Book { get; set; } = null!;
+    public virtual Book? Book { get; set; } = null!;
 
-    public virtual Store Store { get; set; } = null!;
+    public virtual Store? Store { get; set; } = null!;
 }

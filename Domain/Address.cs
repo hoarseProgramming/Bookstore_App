@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Bookstore_App;
+﻿namespace Bookstore_App.Domain;
 
 public partial class Address
 {

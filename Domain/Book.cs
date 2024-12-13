@@ -1,4 +1,4 @@
-﻿namespace Bookstore_App;
+﻿namespace Bookstore_App.Domain;
 
 public partial class Book
 {
@@ -45,7 +45,7 @@ public partial class Book
                     listOfAuthors.Add(author);
                 }
 
-                string authors = String.Empty;
+                string authors = string.Empty;
 
                 for (int i = 0; i < listOfAuthors.Count; i++)
                 {
