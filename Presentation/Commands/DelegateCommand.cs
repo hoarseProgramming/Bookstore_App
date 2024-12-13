@@ -1,15 +1,15 @@
 ﻿using System.Windows.Input;
 
-namespace Bookstore_App.Commands
+namespace Bookstore_App.Presentation.Commands
 {
     internal class DelegateCommand : ICommand
     {
         private readonly Action<object> execute;
-        private readonly Func<object?, bool> canExecute;
+        private readonly Func<object?, bool>? canExecute;
 
         public event EventHandler? CanExecuteChanged;
 
-        public DelegateCommand(Action<object> execute, Func<object?, bool> canExecute = null)
+        public DelegateCommand(Action<object> execute, Func<object?, bool>? canExecute = null)
         {
             ArgumentNullException.ThrowIfNull(execute);
             this.execute = execute;
