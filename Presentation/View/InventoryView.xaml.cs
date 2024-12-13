@@ -1,7 +1,8 @@
-﻿using Bookstore_App.ViewModel;
+﻿using Bookstore_App.Domain;
+using Bookstore_App.Presentation.ViewModel;
 using System.Windows.Controls;
 
-namespace Bookstore_App.View
+namespace Bookstore_App.Presentation.View
 {
     /// <summary>
     /// Interaction logic for InventoryView.xaml
@@ -17,7 +18,7 @@ namespace Bookstore_App.View
         {
             var store = (sender as ListBox)?.SelectedItem as Store;
             await (DataContext as InventoryViewModel)?.GetAndSetInventoryBalancesAsync(store);
-            await (DataContext as InventoryViewModel)?.GetAndSetBooks();
+            await (DataContext as InventoryViewModel)?.GetAndSetBooksForInventoryView();
         }
     }
 }
