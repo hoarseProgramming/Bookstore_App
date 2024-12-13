@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Bookstore_App.ViewModel
+namespace Bookstore_App.Presentation.ViewModel
 {
     class ViewModelBase : INotifyPropertyChanged
     {
