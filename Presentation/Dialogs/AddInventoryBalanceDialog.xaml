@@ -1,9 +1,9 @@
-﻿<Window x:Class="Bookstore_App.Dialogs.AddInventoryBalanceDialog"
+﻿<Window x:Class="Bookstore_App.Presentation.Dialogs.AddInventoryBalanceDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Bookstore_App.Dialogs"
+        xmlns:local="clr-namespace:Bookstore_App.Presentation.Dialogs"
         mc:Ignorable="d"
         Title="Add new book" 
         Height="220" 
@@ -42,6 +42,7 @@
                 <TextBox Margin="7 , 0" 
                          Height="20"
                          Width="40"
+                         Text="0"
                          KeyUp="TextBox_KeyUp"/>
 
             </StackPanel>
