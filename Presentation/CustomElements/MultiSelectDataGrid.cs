@@ -2,18 +2,18 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Bookstore_App.View.CustomElements
+namespace Bookstore_App.Presentation.CustomElements
 {
     internal class MultiSelectDataGrid : DataGrid
     {
         public MultiSelectDataGrid()
         {
-            this.SelectionChanged += MultiSelectDataGrid_SelectionChanged;
+            SelectionChanged += MultiSelectDataGrid_SelectionChanged;
         }
 
         void MultiSelectDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.SelectedItemsList = this.SelectedItems;
+            SelectedItemsList = SelectedItems;
         }
 
         #region SelectedItemsList
