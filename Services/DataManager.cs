@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Bookstore_App.Domain;
+using Bookstore_App.Infrastructure.Data.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bookstore_App.Services
 {
@@ -28,7 +30,6 @@ namespace Bookstore_App.Services
             return inventoryBalances;
         }
 
-        //TODO: Try catch if book is already in DB
         public static async Task AddInventoryBalance(Store store, Book book, int numberOfUnits)
         {
             using var db = new BookstoreCompanyContext();
@@ -54,6 +55,42 @@ namespace Bookstore_App.Services
             return books;
         }
 
+        public static async Task UpdateInventoryBalancesAsync(List<InventoryBalance> updatedInventoryBalances, int id)
+        {
+            using var db = new BookstoreCompanyContext();
+
+            var inventoryBalances = await db.InventoryBalances.Where(i => i.StoreId == id).ToListAsync();
+
+            foreach (var inventoryBalance in inventoryBalances)
+            {
+                if (!(updatedInventoryBalances.Any(i => i.Isbn13.Equals(inventoryBalance.Isbn13) && i.StoreId.Equals(inventoryBalance.StoreId))))
+                {
+                    db.InventoryBalances.Remove(inventoryBalance);
+                }
+            }
+            foreach (var inventoryBalance in updatedInventoryBalances)
+            {
+                if (!(inventoryBalances.Any(i => i.Isbn13.Equals(inventoryBalance.Isbn13) && i.StoreId.Equals(inventoryBalance.StoreId))))
+                {
+                    inventoryBalance.Store = null;
+                    inventoryBalance.Book = null;
+                    inventoryBalances.Add(inventoryBalance);
+                    db.InventoryBalances.Add(inventoryBalance);
+                }
+            }
+
+            for (int i = 0; i < updatedInventoryBalances.Count; i++)
+            {
+                if (inventoryBalances.Any(ib => ib.Isbn13.Equals(updatedInventoryBalances[i].Isbn13) && ib.StoreId.Equals(updatedInventoryBalances[i].StoreId)))
+                {
+                    inventoryBalances[i].UnitsInStock = updatedInventoryBalances[i].UnitsInStock;
+                }
+            }
+
+            await db.SaveChangesAsync();
+
+        }
+
         //TODO: Remove?
         //internal static async Task<Book> GetBookAsync(Book selectedBook)
         //{
@@ -64,22 +101,6 @@ namespace Bookstore_App.Services
         //    return book;
         //}
 
-        //TODO: Use view to get Names of authors?
-        //public static async Task<List<BookInfo>> GetBookInfosAsync(List<Book> books)
-        //{
-        //    using var db = new BookstoreCompanyContext();
 
-        //    var bookInfos = new List<BookInfo>();
-
-        //    foreach (var book in books)
-        //    {
-        //        var bookInfo = await db.BookInfos
-        //            .Include(bi => bi.AuthorS)
-        //            .FirstOrDefaultAsync(b => b.Isbn13 == book.Isbn13);
-        //        bookInfos.Add(bookInfo);
-        //    }
-
-        //    return bookInfos;
-        //}
     }
 }
