@@ -27,7 +27,7 @@
                 
                 <Label Content="Store:" 
                        FontWeight="Bold"/>
-                <TextBlock Text="{Binding InventoryViewModel.ActiveStore.StoreName}" 
+                <TextBlock Text="{Binding InventoryViewModel.SelectedStore.StoreName}" 
                            FontWeight="DemiBold"
                            Margin="0, 0, 8, 0"
                            VerticalAlignment="Center"/>

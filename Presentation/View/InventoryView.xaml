@@ -10,13 +10,11 @@
              mc:Ignorable="d" 
              DataContext="{Binding InventoryViewModel}"
              d:DataContext="{d:DesignInstance Type=UI:InventoryViewModel, IsDesignTimeCreatable=True}"
+             IsEnabled="{Binding IsInventoryMode}"
+             IsEnabledChanged="UserControl_IsEnabledChanged"
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="boolToVisibilityConver" />
-    </UserControl.Resources>
-    
-    <Grid Visibility="{Binding IsInventoryMode, Converter={StaticResource boolToVisibilityConver}}">
+    <Grid>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -42,7 +40,8 @@
 
             <ListBox Grid.Row="1"
                      ItemsSource="{Binding Stores}"
-                     SelectedItem="{Binding ActiveStore}"
+                     SelectedItem="{Binding SelectedStore}"
+                     IsEnabled="{Binding StoresAreLoadedSuccessfully}"
                      Margin="0, 0, 0, 10"
                      DisplayMemberPath="StoreName"
                      SelectionChanged="myListBox_SelectionChanged"/> 
@@ -93,7 +92,7 @@
                         HorizontalAlignment="Right"
                         Style="{StaticResource ButtonStyle}"
                         Content="{fa:Icon floppydisk, Foreground=ForestGreen, IconFont=Solid}"
-                        Command="{Binding SaveInventoryBalancesCommand}"/>
+                        Command="{Binding ShouldSaveInventoryBalancesCommand}"/>
             </Grid>
 
             <customElements:MultiSelectDataGrid Grid.Row="1"

@@ -22,7 +22,7 @@ public partial class BookstoreCompanyContext
 
             builder.HasOne(d => d.Book).WithMany(p => p.InventoryBalances)
                 .HasForeignKey(d => d.Isbn13)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__inventory__ISBN1__5DCAEF64");
 
             builder.HasOne(d => d.Store).WithMany(p => p.InventoryBalances)

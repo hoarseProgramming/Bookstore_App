@@ -38,7 +38,10 @@ namespace Bookstore_App.Presentation.Dialogs
             if (textBox is not null)
             {
                 success = int.TryParse(textBox.Text, out selectedNumberOfUnits);
-                success = selectedNumberOfUnits >= 0;
+                if (success)
+                {
+                    success = selectedNumberOfUnits >= 0;
+                }
             }
 
             if (!success)

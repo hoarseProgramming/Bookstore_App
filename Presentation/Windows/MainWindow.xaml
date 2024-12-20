@@ -8,13 +8,18 @@
         xmlns:UI="clr-namespace:Bookstore_App.Presentation.ViewModel"
         d:DataContext="{d:DesignInstance Type=UI:MainWindowViewModel, IsDesignTimeCreatable=True}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Book store" 
+        MinHeight="450"
+        MinWidth="970"
+        Height="450" 
+        Width="970">
 
     <Window.InputBindings>
 
         <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{Binding InventoryViewModel.ShouldOpenAddInventoryBalanceCommand}"/>
         <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{Binding InventoryViewModel.RemoveInventoryBalanceCommand}" />
-        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding InventoryViewModel.SaveInventoryBalancesCommand}" />
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding InventoryViewModel.ShouldSaveInventoryBalancesCommand}" />
+        <KeyBinding Key="I" Modifiers="Alt" Command="{Binding ShouldGoToInventoryCommand}" />
         <KeyBinding Key="F4" Modifiers="Alt" Command="{Binding ToggleFullScreenCommand}" />
 
 
@@ -30,7 +35,10 @@
         </Grid.RowDefinitions>
 
         <view:MenuView/>
-        <view:InventoryView Grid.Row="1"/>
+        <view:InventoryView Grid.Row="1"
+                            Visibility="{Binding IsInventoryMode, Converter={StaticResource boolToVisibilityConver}}"/>
+        <view:CatalogView Grid.Row="1"
+                    Visibility="{Binding IsCatalogMode, Converter={StaticResource boolToVisibilityConver}}"/>
 
       
     </Grid>

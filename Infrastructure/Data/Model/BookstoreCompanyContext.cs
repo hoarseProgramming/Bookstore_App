@@ -63,6 +63,7 @@ public partial class BookstoreCompanyContext : DbContext
         optionsBuilder
             .UseSqlServer(connectionString)
 #if DEBUG
+            .EnableSensitiveDataLogging()
             .LogTo(
             message => Debug.WriteLine(message),
             LogLevel.Information

@@ -52,7 +52,7 @@ public partial class BookstoreCompanyContext
                         .HasConstraintName("FK__books_aut__autho__6477ECF3"),
                     l => l.HasOne<Book>().WithMany()
                         .HasForeignKey("Isbn13")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK__books_aut__ISBN1__628FA481"),
                     j =>
                     {
@@ -73,7 +73,7 @@ public partial class BookstoreCompanyContext
                         .HasConstraintName("FK__books_sub__subCa__693CA210"),
                     l => l.HasOne<Book>().WithMany()
                         .HasForeignKey("Isbn13")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK__books_sub__ISBN1__6754599E"),
                     j =>
                     {

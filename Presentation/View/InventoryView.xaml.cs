@@ -4,9 +4,6 @@ using System.Windows.Controls;
 
 namespace Bookstore_App.Presentation.View
 {
-    /// <summary>
-    /// Interaction logic for InventoryView.xaml
-    /// </summary>
     public partial class InventoryView : UserControl
     {
         public InventoryView()
@@ -19,6 +16,14 @@ namespace Bookstore_App.Presentation.View
             var store = (sender as ListBox)?.SelectedItem as Store;
             await (DataContext as InventoryViewModel)?.GetAndSetInventoryBalancesAsync(store);
             await (DataContext as InventoryViewModel)?.GetAndSetBooksForInventoryView();
+        }
+
+        private async void UserControl_IsEnabledChanged(object sender, System.Windows.DependencyPropertyChangedEventArgs e)
+        {
+            if (this.IsEnabled == true)
+            {
+                await (DataContext as InventoryViewModel)?.GetAndSetStoresAsync();
+            }
         }
     }
 }

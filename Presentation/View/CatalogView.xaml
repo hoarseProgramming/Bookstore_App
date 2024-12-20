@@ -1,0 +1,146 @@
+﻿<UserControl x:Class="Bookstore_App.Presentation.View.CatalogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Bookstore_App.Presentation.View"
+             xmlns:UI="clr-namespace:Bookstore_App.Presentation.ViewModel"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
+             xmlns:customElements="clr-namespace:Bookstore_App.Presentation.CustomElements"
+             DataContext="{Binding CatalogViewModel}"
+             d:DataContext="{d:DesignInstance Type=UI:CatalogViewModel, IsDesignTimeCreatable=True}"
+             IsEnabled="{Binding IsCatalogMode}"
+             IsEnabledChanged="UserControl_IsEnabledChanged"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid HorizontalAlignment="Center">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid Margin="10"
+                  Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Books" 
+                           Grid.Column="0"
+                           Margin="0, 0, 20, 10"
+                           Padding="2, 0, 0, 0"
+                           FontWeight="DemiBold"
+                           FontSize="20"/>
+
+                <Button
+                     Width="25"
+                     Height="25"
+                     Grid.Column="1"
+                     VerticalAlignment="Top"
+                     HorizontalAlignment="Right"
+                     Style="{StaticResource ButtonStyle}"
+                     Content="{fa:Icon plus, Foreground=ForestGreen, IconFont=Solid}"
+                     Command="{Binding OpenAddBookCommand}"/>
+                <Button Grid.Column="2"
+                     Width="25"
+                     Height="25"
+                     Margin="10, 0"
+                     VerticalAlignment="Top"
+                     HorizontalAlignment="Right"
+                     Style="{StaticResource ButtonStyle}"
+                     Content="{fa:Icon minus, Foreground=ForestGreen, IconFont=Solid}"
+                     Command="{Binding RemoveBookCommand}"/>
+                <Button Grid.Column="4"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Right"
+                        Background="LightGreen"
+                        Foreground="Green"
+                        FontWeight="SemiBold"
+                        Content="Edit book" 
+                        Height="25"
+                        Padding="4"
+                        Margin="10, 0"
+                        Command="{Binding OpenEditBookCommand}"/>
+                <Button Grid.Column="5"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Right"
+                        Content="Edit authors" 
+                        Height="25"
+                        Padding="4"
+                        Background="LightGreen"
+                        Foreground="Green"
+                        FontWeight="SemiBold"
+                        Command="{Binding OpenEditAuthorsCommand}"/>
+
+            </Grid>
+
+            <customElements:MultiSelectDataGrid Grid.Row="1"
+                    ItemsSource="{Binding Books, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItemsList="{Binding SelectedBooks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    AutoGenerateColumns="False"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="6"
+                    MinWidth="1000"
+                    MaxWidth="1000"
+                    RowHeaderWidth="15"
+                    Background="White"
+                    IsReadOnly="True"
+                    CanUserResizeColumns="True"
+                    CanUserResizeRows="False"
+                    CanUserAddRows="False"
+                    CanUserDeleteRows="False"
+                    SelectionUnit="FullRow" 
+                    Margin="10, 0, 10, 10">
+                <customElements:MultiSelectDataGrid.Columns>
+
+                    <DataGridTextColumn Header="Title"
+                                        Width="Auto"
+                                        IsReadOnly="True"
+                                        Binding="{Binding Title}" />
+                    <DataGridTextColumn Header="ISBN13"
+                                        Width="Auto"
+                                        IsReadOnly="True"
+                                        Binding="{Binding Isbn13}" />
+                    <DataGridTextColumn Header="Author(s)"
+                                        IsReadOnly="True"
+                                        Width="Auto"
+                                        Binding="{Binding ConcatenatedLastNames, UpdateSourceTrigger=PropertyChanged}" />
+                    <DataGridTextColumn Header="Language"
+                                        Width="Auto"
+                                        Binding="{Binding Language.Language1}" />
+                    <DataGridTextColumn Header="Sub category"
+                                        Width="Auto"
+                                        Binding="{Binding ConcatenatedSubCategories}" />
+                    <DataGridTextColumn Header="Primary audience"
+                                        Width="Auto"
+                                        Binding="{Binding PrimaryAudience.PrimaryAudienceName}" />
+                    <DataGridTextColumn Header="Price"
+                                        Width="Auto"
+                                        Binding="{Binding Price}" />
+                    <DataGridTextColumn Header="Publishing house"
+                                        Width="*"
+                                        Binding="{Binding PublishingHouse.PublishingHouseName}" />
+                    
+                </customElements:MultiSelectDataGrid.Columns>
+            </customElements:MultiSelectDataGrid>
+
+        </Grid>
+    </Grid>
+</UserControl>

@@ -11,5 +11,6 @@ namespace Bookstore_App.Presentation.View
         {
             InitializeComponent();
         }
+
     }
 }

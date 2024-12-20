@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:Bookstore_App"
              StartupUri="Presentation\Windows\MainWindow.xaml">
     <Application.Resources>
+        <BooleanToVisibilityConverter x:Key="boolToVisibilityConver" />
         <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="True">

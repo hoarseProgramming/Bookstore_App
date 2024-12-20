@@ -8,18 +8,32 @@ namespace Bookstore_App.Presentation.ViewModel
 {
     class InventoryViewModel : ViewModelBase
     {
-        private bool _isInventoryMode = true;
+        private bool _isInventoryMode = false;
 
         public bool IsInventoryMode
         {
-            get => _isInventoryMode = true;
+            get => _isInventoryMode;
             set
             {
                 _isInventoryMode = value;
+                RaisePropertyChanged();
                 ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
+                ShouldSaveInventoryBalancesCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        private bool _storesAreLoadedSuccessfully = false;
+
+        public bool StoresAreLoadedSuccessfully
+        {
+            get => _storesAreLoadedSuccessfully;
+            set
+            {
+                _storesAreLoadedSuccessfully = value;
                 RaisePropertyChanged();
             }
         }
+
 
         private bool isPossibleToAddBooks = false;
         private int numberOfBooksInCatalog = 0;
@@ -35,16 +49,17 @@ namespace Bookstore_App.Presentation.ViewModel
                 RaisePropertyChanged();
             }
         }
-        private Store _activeStore;
+        private Store _selectedStore;
 
-        public Store ActiveStore
+        public Store SelectedStore
 
         {
-            get => _activeStore;
+            get => _selectedStore;
             set
             {
-                _activeStore = value;
+                _selectedStore = value;
                 ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
+                ShouldSaveInventoryBalancesCommand.RaiseCanExecuteChanged();
                 RaisePropertyChanged();
             }
         }
@@ -120,7 +135,8 @@ namespace Bookstore_App.Presentation.ViewModel
 
         public DelegateCommand RemoveInventoryBalanceCommand { get; }
 
-        public AsyncDelegateCommand SaveInventoryBalancesCommand { get; }
+        public EventHandler ShouldSaveInventoryBalancesMessage { get; set; }
+        public DelegateCommand ShouldSaveInventoryBalancesCommand { get; }
 
 
         public Action<string, string> ShowError { get; set; }
@@ -130,14 +146,16 @@ namespace Bookstore_App.Presentation.ViewModel
         {
             ShouldOpenAddInventoryBalanceCommand = new DelegateCommand(DoOpenAddInventoryBalance, CanOpenAddInventoryBalance);
             RemoveInventoryBalanceCommand = new DelegateCommand(RemoveInventoryBalance, CanRemoveInventoryBalance);
-            SaveInventoryBalancesCommand = new AsyncDelegateCommand(SaveInventoryBalancesAsync, CanSaveInventoryBalances);
+            ShouldSaveInventoryBalancesCommand = new DelegateCommand(ShouldSaveInventoryBalances, CanSaveInventoryBalances);
 
             Stores.Add(new Store() { StoreName = "Loading" });
 
         }
 
+        private void ShouldSaveInventoryBalances(object arg) => ShouldSaveInventoryBalancesMessage.Invoke(this, EventArgs.Empty);
+
         //TODO: Async command call, how?
-        private async Task SaveInventoryBalancesAsync(object obj)
+        public async Task SaveInventoryBalancesAsync()
         {
             if (InventoryBalances.Any(i => i.UnitsInStock < 0))
             {
@@ -146,21 +164,21 @@ namespace Bookstore_App.Presentation.ViewModel
             else
             {
                 IsSaving = true;
-                SaveInventoryBalancesCommand.RaiseCanExecuteChanged();
+                ShouldSaveInventoryBalancesCommand.RaiseCanExecuteChanged();
                 try
                 {
-                    await DataManager.UpdateInventoryBalancesAsync(InventoryBalances.ToList(), ActiveStore.Id);
+                    await DataManager.UpdateInventoryBalancesAsync(InventoryBalances.ToList(), SelectedStore.Id);
                 }
                 catch (Exception)
                 {
                     ShowError?.Invoke("Couldn't save changes to inventory balances!", "Error!");
                 }
                 IsSaving = false;
-                SaveInventoryBalancesCommand.RaiseCanExecuteChanged();
+                ShouldSaveInventoryBalancesCommand.RaiseCanExecuteChanged();
             }
         }
 
-        private bool CanSaveInventoryBalances(object? arg) => !IsSaving;
+        private bool CanSaveInventoryBalances(object? arg) => !IsSaving && SelectedStore is not null;
 
         private void RemoveInventoryBalance(object obj)
         {
@@ -182,16 +200,15 @@ namespace Bookstore_App.Presentation.ViewModel
         private bool CanRemoveInventoryBalance(object? args) => SelectedInventoryBalances.Count > 0;
 
 
-        public async Task AddInventoryBalanceAsync(int unitsInStock)
+        public void AddInventoryBalance(int unitsInStock)
         {
-            InventoryBalances.Add(new InventoryBalance() { Book = SelectedBook, Isbn13 = SelectedBook.Isbn13, Store = ActiveStore, StoreId = ActiveStore.Id, UnitsInStock = unitsInStock });
-
+            InventoryBalances.Add(new InventoryBalance() { Book = SelectedBook, Isbn13 = SelectedBook.Isbn13, Store = SelectedStore, StoreId = SelectedStore.Id, UnitsInStock = unitsInStock });
             isPossibleToAddBooks = InventoryBalances.Count < numberOfBooksInCatalog ? true : false;
             ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
         }
         private void DoOpenAddInventoryBalance(object obj) => OpenAddInventoryBalance?.Invoke();
 
-        private bool CanOpenAddInventoryBalance(object? arg) => IsInventoryMode && ActiveStore is not null && InventoryBalances.Count < numberOfBooksInCatalog ? true : false;
+        private bool CanOpenAddInventoryBalance(object? arg) => IsInventoryMode && SelectedStore is not null && InventoryBalances.Count < numberOfBooksInCatalog ? true : false;
 
         public async Task GetAndSetBooksForInventoryView()
         {
@@ -218,7 +235,6 @@ namespace Bookstore_App.Presentation.ViewModel
                 isPossibleToAddBooks = InventoryBalances.Count < numberOfBooksInCatalog ? true : false;
                 ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
             }
-            //TODO: Invoke Event to show messagebox with eventargs with message to show (taken from exception message?)
             catch (Exception ex)
             {
                 ShowError?.Invoke("Couldn't load book catalog", "Error!");
@@ -229,6 +245,7 @@ namespace Bookstore_App.Presentation.ViewModel
         //TODO: Make async / Command for main menu
         public async Task GetAndSetStoresAsync()
         {
+            //TODO: FIX ERROR HANDLING
             try
             {
                 Stores = new ObservableCollection<Store>(await DataManager.GetStoresAsync());
@@ -238,10 +255,20 @@ namespace Bookstore_App.Presentation.ViewModel
                 ShowError?.Invoke("Couldn't load stores", "Error!");
             }
 
+            if (Stores.Count == 0)
+            {
+                Stores.Add(new Store() { StoreName = "Couldn't load stores" });
+                ShowError?.Invoke("Couldn't load stores", "Error!");
+                StoresAreLoadedSuccessfully = false;
+            }
+            else
+            {
+                StoresAreLoadedSuccessfully = true;
+            }
         }
         //TODO: Invoke Event to show messagebox with eventargs with message to show (taken from exception message?)
 
-        //TODO: Make async! Make as Command!?
+        //TODO: Make async! 
         public async Task GetAndSetInventoryBalancesAsync(Store store)
         {
             try
