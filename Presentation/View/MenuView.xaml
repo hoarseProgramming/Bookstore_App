@@ -16,7 +16,7 @@
                 
                 <Separator/>
 
-                <MenuItem Header="_Save" 
+                <MenuItem Header="_Save Inventory" 
                           Icon="{fa:Icon floppydisk, Foreground=ForestGreen, IconFont=Solid}"
                           Command="{Binding InventoryViewModel.ShouldSaveInventoryBalancesCommand}"
                           InputGestureText="Ctrl+S"/>
@@ -29,36 +29,16 @@
 
             </MenuItem>
 
-            <!--<MenuItem Header="_Edit"
-                      DataContext="{Binding ConfigurationViewModel}">
-
-                <MenuItem Header="_Add Question"
-                          Icon="{fa:Icon plus,Foreground=ForestGreen}"
-                          Command="{Binding AddQuestionCommand}"
-                          InputGestureText="Ctrl+" />
-
-                <MenuItem Header="_Remove Question" 
-                          Icon="{fa:Icon minus, Foreground=ForestGreen}"
-                          Command="{Binding RemoveQuestionCommand}"
-                          InputGestureText="Ctrl-" />
-
-                <MenuItem Header="Pack _Options"
-                          Icon="{fa:Icon sliders, Foreground=ForestGreen}"
-                          Command="{Binding OpenPackOptionsCommand}"
-                          InputGestureText="Ctrl+O" />
-
-            </MenuItem>-->
-
             <MenuItem Header="_Inventory">
                 
                 <MenuItem Header="_Add Inventory Row" 
                           Icon="{fa:Icon plus, Foreground=ForestGreen}"
                           Command="{Binding InventoryViewModel.ShouldOpenAddInventoryBalanceCommand}"
-                          InputGestureText="Ctrl+"/>
+                          InputGestureText="Ctrl +"/>
                 
                 <MenuItem Header="_Remove Inventory Row(s)" 
                           Icon="{fa:Icon minus, Foreground=ForestGreen}"
-                          InputGestureText="Ctrl-"
+                          InputGestureText="Ctrl -"
                           Command="{Binding InventoryViewModel.RemoveInventoryBalanceCommand}"/>
             </MenuItem>
 
@@ -66,17 +46,23 @@
 
                 <MenuItem Header="_Add Book" 
                           Icon="{fa:Icon plus, Foreground=ForestGreen}"
-                          InputGestureText="Ctrl+" />
+                          InputGestureText="Alt +"
+                          Command="{Binding CatalogViewModel.OpenAddBookCommand}"/>
                 <MenuItem Header="_Remove Book(s)" 
                           Icon="{fa:Icon minus, Foreground=ForestGreen}"
-                          InputGestureText="Ctrl-" />
+                          InputGestureText="Alt -" 
+                          Command="{Binding CatalogViewModel.RemoveBookCommand}"/>
             </MenuItem>
 
             <MenuItem Header="_View">
 
+                <MenuItem Header="_Main menu" 
+                          Icon="{fa:Icon play, Foreground=ForestGreen}"
+                          Command="{Binding GoToMainMenuCommand}"
+                          InputGestureText="Alt+M"/>
                 <MenuItem Header="_Inventory" 
                           Icon="{fa:Icon play, Foreground=ForestGreen}"
-                          Command="{Binding ShouldGoToInventoryCommand}"
+                          Command="{Binding GoToInventoryCommand}"
                           InputGestureText="Alt+I"/>
                 <MenuItem Header="_Catalog" 
                           Icon="{fa:Icon gears, Foreground=ForestGreen}"
