@@ -17,6 +17,7 @@ namespace Bookstore_App.Presentation.ViewModel
                 _isCatalogMode = value;
                 RaisePropertyChanged();
                 OpenAddBookCommand.RaiseCanExecuteChanged();
+                RemoveAuthorCommand.RaiseCanExecuteChanged();
                 OpenEditAuthorsCommand.RaiseCanExecuteChanged();
             }
         }
@@ -519,7 +520,7 @@ namespace Bookstore_App.Presentation.ViewModel
             //SelectedAuthors.Clear();
         }
 
-        private bool CanOpenAddBook(object? arg) => IsCatalogMode;
+        private bool CanOpenAddBook(object? arg) => IsCatalogMode && !IsSaving;
         public async Task GetAndSetBooksForCatalogView()
         {
             var cataloginfo = await DataManager.GetCatalogInfoAsync();
