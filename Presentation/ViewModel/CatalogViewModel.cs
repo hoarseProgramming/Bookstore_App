@@ -3,7 +3,6 @@ using Bookstore_App.Presentation.Commands;
 using Bookstore_App.Services;
 using System.Collections;
 using System.Collections.ObjectModel;
-using static Bookstore_App.Services.DataManager;
 
 namespace Bookstore_App.Presentation.ViewModel
 {
@@ -43,8 +42,8 @@ namespace Bookstore_App.Presentation.ViewModel
             }
         }
 
-        private ObservableCollection<CatalogBook> _books = new();
-        public ObservableCollection<CatalogBook> Books
+        private ObservableCollection<BookViewModel> _books = new();
+        public ObservableCollection<BookViewModel> Books
         {
             get => _books;
             set
@@ -54,8 +53,8 @@ namespace Bookstore_App.Presentation.ViewModel
             }
         }
 
-        private CatalogBook _activeBook;
-        public CatalogBook ActiveBook
+        private BookViewModel _activeBook;
+        public BookViewModel ActiveBook
         {
             get => _activeBook;
             set
@@ -80,9 +79,9 @@ namespace Bookstore_App.Presentation.ViewModel
             }
         }
 
-        private List<CatalogBook> booksToRemoveInDatabase = new();
-        private List<CatalogBook> booksToSaveInDatabase = new();
-        private List<CatalogBook> booksToEditInDatabase = new();
+        private List<BookViewModel> booksToRemoveInDatabase = new();
+        private List<BookViewModel> booksToSaveInDatabase = new();
+        private List<BookViewModel> booksToEditInDatabase = new();
 
         private string _title;
         public string Title
@@ -373,7 +372,7 @@ namespace Bookstore_App.Presentation.ViewModel
         {
             IsEditingBook = true;
 
-            ActiveBook = (CatalogBook)SelectedBooks[0];
+            ActiveBook = (BookViewModel)SelectedBooks[0];
             SelectedAuthor = ActiveBook.Authors.FirstOrDefault();
             SelectedAuthors = ActiveBook.Authors;
             SelectedLanguage = ActiveBook.Language;
@@ -500,7 +499,7 @@ namespace Bookstore_App.Presentation.ViewModel
             Year = "0001";
             Month = "01";
             Day = "01";
-            ActiveBook = new CatalogBook(new Book
+            ActiveBook = new BookViewModel(new Book
             {
                 Isbn13 = "9780000000000",
                 Title = "Enter title here",
@@ -719,14 +718,14 @@ namespace Bookstore_App.Presentation.ViewModel
 
         private void RemoveBookOrBooks(object obj)
         {
-            var booksToRemove = new List<CatalogBook>();
+            var booksToRemove = new List<BookViewModel>();
             var booksToRemoveFromDatabase = new List<Book>();
 
             foreach (var book in SelectedBooks)
             {
-                booksToRemove.Add((CatalogBook)book);
+                booksToRemove.Add((BookViewModel)book);
 
-                var bookModel = ((CatalogBook)book).GetModel();
+                var bookModel = ((BookViewModel)book).GetModel();
                 bookModel.Language = null;
                 bookModel.PublishingHouse = null;
                 bookModel.PrimaryAudience = null;
