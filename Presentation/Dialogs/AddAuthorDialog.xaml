@@ -77,13 +77,19 @@
                  Margin="0, 15">
 
             <Button x:Name="buttonCancel" 
-                 Content="Cancel"
-                 Width="70"
-                 Margin="0, 0, 20, 0"
-                 Click="buttonCancel_Click"/>
+                     Content="Cancel"
+                     Width="70"
+                    Background="LightGreen"
+                    Foreground="Green"
+                    FontWeight="SemiBold"
+                     Margin="0, 0, 20, 0"
+                     Click="buttonCancel_Click"/>
 
             <Button x:Name="buttonAddAuthor" 
                  Content="Add author"
+                Background="LightGreen"
+                Foreground="Green"
+                FontWeight="SemiBold"
                  Width="70"
                  Click="buttonAddAuthor_Click"/>
 

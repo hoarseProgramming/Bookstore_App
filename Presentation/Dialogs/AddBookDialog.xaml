@@ -112,8 +112,11 @@
                       Margin="0, 0, 5, 0"
                       VerticalAlignment="Center"/>
             <Button   Grid.Column="1"  
-                      Content="Add author" 
+                      Content="Add author to book" 
                       Margin="0, 0, 5, 0"
+                      Background="LightGreen"
+                      Foreground="Green"
+                      FontWeight="SemiBold"
                       VerticalAlignment="Center"
                       Command="{Binding CatalogViewModel.AddAuthorToBookCommand}"/>
             <ComboBox Grid.Column="2"
@@ -122,10 +125,6 @@
                       DisplayMemberPath="LastName"
                       Margin="0, 0, 5, 0"
                       VerticalAlignment="Center"/>
-            <!--<Button   Grid.Column="3"  
-                      Content="Create author" 
-                      Command="{Binding CatalogViewModel.OpenAddAuthorCommand}"
-                      VerticalAlignment="Center"/>-->
         </Grid>
 
         <Label Content="Sub category:" 
@@ -165,11 +164,17 @@
                     Content="Cancel"
                     Width="60"
                     Margin="0, 0, 20, 0"
+                    Background="LightGreen"
+                    Foreground="Green"
+                    FontWeight="SemiBold"
                     Click="buttonCancel_Click"/>
 
             <Button x:Name="buttonAddBook" 
                     Content="Add book"
                     Width="60"
+                    Background="LightGreen"
+                    Foreground="Green"
+                    FontWeight="SemiBold"
                     Click="buttonAddBook_Click"/>
 
         </StackPanel>
