@@ -19,7 +19,13 @@
         <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{Binding InventoryViewModel.ShouldOpenAddInventoryBalanceCommand}"/>
         <KeyBinding Key="OemMinus" Modifiers="Ctrl" Command="{Binding InventoryViewModel.RemoveInventoryBalanceCommand}" />
         <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding InventoryViewModel.ShouldSaveInventoryBalancesCommand}" />
-        <KeyBinding Key="I" Modifiers="Alt" Command="{Binding ShouldGoToInventoryCommand}" />
+
+        <KeyBinding Key="OemPlus" Modifiers="Alt" Command="{Binding CatalogViewModel.OpenAddBookCommand}" />
+        <KeyBinding Key="OemMinus" Modifiers="Alt" Command="{Binding CatalogViewModel.RemoveBookCommand}" />
+
+        <KeyBinding Key="M" Modifiers="Alt" Command="{Binding GoToMainMenuCommand}" />
+        <KeyBinding Key="I" Modifiers="Alt" Command="{Binding GoToInventoryCommand}" />
+        <KeyBinding Key="C" Modifiers="Alt" Command="{Binding GoToCatalogCommand}" />
         <KeyBinding Key="F4" Modifiers="Alt" Command="{Binding ToggleFullScreenCommand}" />
 
 
@@ -35,6 +41,74 @@
         </Grid.RowDefinitions>
 
         <view:MenuView/>
+        
+        <Grid Visibility="{Binding IsMainWIndowMode, Converter={StaticResource boolToVisibilityConver}}"
+                Grid.Row="1"
+              Margin="0, 10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="5*" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            
+            <Label Content="Welcome to your book store!" 
+                   Grid.ColumnSpan="2"
+                   FontSize="20"
+                   FontWeight="SemiBold"
+                   HorizontalAlignment="Center"/>
+
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Label Content="Browse or edit the catalog:" 
+                       FontSize="20"
+                       HorizontalAlignment="Center"/>
+                <Button Content="Catalog"
+                        Grid.Row="1"
+                        FontSize="20"
+                        Margin="20"
+                        Padding="5"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Background="LightGreen"
+                        Foreground="Green"
+                        FontWeight="SemiBold"
+                        Command="{Binding GoToCatalogCommand}"/>
+            </Grid>
+
+            <Grid Grid.Row="1"
+                  Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Label Content="Browse or edit inventory in stores:" 
+                       Grid.ColumnSpan="2"
+                       FontSize="20"
+                       HorizontalAlignment="Center"/>
+                <Button Content="Inventory"
+                        Grid.Row="1"
+                        FontSize="20"
+                        Margin="20"
+                        Padding="5"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Background="LightGreen"
+                        Foreground="Green"
+                        FontWeight="SemiBold"
+                        Command="{Binding GoToInventoryCommand}"/>
+            </Grid>
+
+        </Grid>
+
         <view:InventoryView Grid.Row="1"
                             Visibility="{Binding IsInventoryMode, Converter={StaticResource boolToVisibilityConver}}"/>
         <view:CatalogView Grid.Row="1"
