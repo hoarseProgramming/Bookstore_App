@@ -7,6 +7,19 @@ namespace Bookstore_App.Presentation.ViewModel
         public InventoryViewModel InventoryViewModel { get; } = new();
         public CatalogViewModel CatalogViewModel { get; } = new();
 
+        private bool _IsWorkingWithDataBase;
+
+        public bool IsWorkingWIthDataBase
+        {
+            get => _IsWorkingWithDataBase;
+            set
+            {
+                _IsWorkingWithDataBase = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
         private bool _IsMainWindowMode = true;
 
         public bool IsMainWIndowMode
@@ -30,6 +43,9 @@ namespace Bookstore_App.Presentation.ViewModel
         public DelegateCommand GoToMainMenuCommand { get; set; }
         public MainWindowViewModel()
         {
+            InventoryViewModel.SetMainWindowViewModel(this);
+            CatalogViewModel.SetMainWindowViewModel(this);
+
             ToggleFullScreenCommand = new DelegateCommand(DoToggleFullScreen);
             GoToInventoryCommand = new DelegateCommand(ShouldGoToInventory, CanGoToInventory);
             GoToCatalogCommand = new DelegateCommand(GoToCatalog, CanGoToCatalog);
