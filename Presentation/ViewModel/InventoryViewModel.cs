@@ -89,7 +89,7 @@ class InventoryViewModel : ViewModelBase
         }
     }
 
-    private ObservableCollection<InventoryBalance> _inventoryBalances = new();
+    private ObservableCollection<InventoryBalance> _inventoryBalances = [];
     public ObservableCollection<InventoryBalance> InventoryBalances
     {
         get => _inventoryBalances;
