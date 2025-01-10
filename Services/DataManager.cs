@@ -11,8 +11,6 @@ namespace Bookstore_App.Services
     {
         public static List<Store> GetStores()
         {
-            //TODO: Track start and end of operation, add debuginfo, FIX ERROR HANDLING
-
             var stores = new List<Store>();
 
             using var db = new BookstoreCompanyContext();
