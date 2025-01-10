@@ -92,6 +92,7 @@
             </Grid>
 
             <customElements:MultiSelectDataGrid Grid.Row="1"
+                    IsEnabled="{Binding CatalogIsLoadedSuccessfully}"
                     ItemsSource="{Binding Books, UpdateSourceTrigger=PropertyChanged}"
                     SelectedItemsList="{Binding SelectedBooks, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     AutoGenerateColumns="False"

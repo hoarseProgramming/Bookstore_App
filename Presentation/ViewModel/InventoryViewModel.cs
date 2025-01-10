@@ -4,217 +4,290 @@ using Bookstore_App.Services;
 using System.Collections;
 using System.Collections.ObjectModel;
 
-namespace Bookstore_App.Presentation.ViewModel
+namespace Bookstore_App.Presentation.ViewModel;
+
+class InventoryViewModel : ViewModelBase
 {
-    class InventoryViewModel : ViewModelBase
+    private MainWindowViewModel mainWindowViewModel;
+
+    private bool _isInventoryMode = false;
+    public bool IsInventoryMode
     {
-        private bool _isInventoryMode = false;
-
-        public bool IsInventoryMode
+        get => _isInventoryMode;
+        set
         {
-            get => _isInventoryMode;
-            set
-            {
-                _isInventoryMode = value;
-                RaisePropertyChanged();
-                ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
-                ShouldSaveInventoryBalancesCommand.RaiseCanExecuteChanged();
-            }
+            _isInventoryMode = value;
+            RaisePropertyChanged();
+            ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
+            ShouldSaveInventoryBalancesCommand.RaiseCanExecuteChanged();
         }
+    }
 
-        private bool _storesAreLoadedSuccessfully = false;
-
-        public bool StoresAreLoadedSuccessfully
+    private bool _storesAreLoadedSuccessfully = false;
+    public bool StoresAreLoadedSuccessfully
+    {
+        get => _storesAreLoadedSuccessfully;
+        set
         {
-            get => _storesAreLoadedSuccessfully;
-            set
-            {
-                _storesAreLoadedSuccessfully = value;
-                RaisePropertyChanged();
-            }
+            _storesAreLoadedSuccessfully = value;
+            ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
+            RaisePropertyChanged();
         }
+    }
 
-
-        private bool isPossibleToAddBooks = false;
-        private int numberOfBooksInCatalog = 0;
-
-        private ObservableCollection<Store> _stores = new();
-
-        public ObservableCollection<Store> Stores
+    private bool _inventoryBalancesAreLoadedSuccessfully = false;
+    public bool InventoryBalancesAreLoadedSuccessfully
+    {
+        get => _inventoryBalancesAreLoadedSuccessfully;
+        set
         {
-            get => _stores;
-            set
-            {
-                _stores = value;
-                RaisePropertyChanged();
-            }
+            _inventoryBalancesAreLoadedSuccessfully = value;
+            ShouldSaveInventoryBalancesCommand.RaiseCanExecuteChanged();
+            ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
+            RaisePropertyChanged();
         }
-        private Store _selectedStore;
+    }
 
-        public Store SelectedStore
-
+    private bool _isSaving = false;
+    public bool IsSaving
+    {
+        get => _isSaving;
+        set
         {
-            get => _selectedStore;
-            set
-            {
-                _selectedStore = value;
-                ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
-                ShouldSaveInventoryBalancesCommand.RaiseCanExecuteChanged();
-                RaisePropertyChanged();
-            }
+            _isSaving = value;
+            ShouldSaveInventoryBalancesCommand.RaiseCanExecuteChanged();
+            ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
+            RemoveInventoryBalanceCommand.RaiseCanExecuteChanged();
         }
+    }
 
-        private ObservableCollection<InventoryBalance> _inventoryBalances = new();
+    private bool isPossibleToAddBooks = false;
+    private int numberOfBooksInCatalog = 0;
 
-        public ObservableCollection<InventoryBalance> InventoryBalances
+    private ObservableCollection<Store> _stores;
+    public ObservableCollection<Store> Stores
+    {
+        get => _stores;
+        set
         {
-            get => _inventoryBalances;
-            set
-            {
-                _inventoryBalances = value;
-                RaisePropertyChanged();
-            }
+            _stores = value;
+            RaisePropertyChanged();
         }
+    }
 
-        private IList _selectedInventoryBalances = new ArrayList();
+    private Store _selectedStore;
+    public Store SelectedStore
 
-        public IList SelectedInventoryBalances
-
+    {
+        get => _selectedStore;
+        set
         {
-            get => _selectedInventoryBalances;
-            set
-            {
-                _selectedInventoryBalances = value;
-                RaisePropertyChanged();
-                RemoveInventoryBalanceCommand.RaiseCanExecuteChanged();
-            }
+            _selectedStore = value;
+            ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
+            ShouldSaveInventoryBalancesCommand.RaiseCanExecuteChanged();
+            RaisePropertyChanged();
         }
+    }
 
-        private InventoryBalance _activeInventoryBalance;
-
-        public InventoryBalance ActiveInventoryBalance
-
+    private ObservableCollection<InventoryBalance> _inventoryBalances = new();
+    public ObservableCollection<InventoryBalance> InventoryBalances
+    {
+        get => _inventoryBalances;
+        set
         {
-            get => _activeInventoryBalance;
-            set
-            {
-                _activeInventoryBalance = value;
-                RaisePropertyChanged();
-            }
+            _inventoryBalances = value;
+            RaisePropertyChanged();
         }
+    }
 
+    private IList _selectedInventoryBalances = new ArrayList();
+    public IList SelectedInventoryBalances
 
-        private ObservableCollection<Book> _books = new();
-
-        public ObservableCollection<Book> Books
+    {
+        get => _selectedInventoryBalances;
+        set
         {
-            get => _books;
-            set
-            {
-                _books = value;
-                RaisePropertyChanged();
-            }
+            _selectedInventoryBalances = value;
+            RaisePropertyChanged();
+            RemoveInventoryBalanceCommand.RaiseCanExecuteChanged();
         }
+    }
 
-        private Book _selectedBook;
+    private InventoryBalance _activeInventoryBalance;
+    public InventoryBalance ActiveInventoryBalance
 
-        public Book SelectedBook
+    {
+        get => _activeInventoryBalance;
+        set
         {
-            get => _selectedBook;
-            set
-            {
-                _selectedBook = value;
-                RaisePropertyChanged();
-            }
+            _activeInventoryBalance = value;
+            RaisePropertyChanged();
         }
+    }
 
-        public DelegateCommand ShouldOpenAddInventoryBalanceCommand { get; }
-        public Action OpenAddInventoryBalance { get; set; }
-
-        public DelegateCommand ShouldAddInventoryBalanceCommand { get; }
-
-        public DelegateCommand RemoveInventoryBalanceCommand { get; }
-
-        public EventHandler ShouldSaveInventoryBalancesMessage { get; set; }
-        public DelegateCommand ShouldSaveInventoryBalancesCommand { get; }
-
-
-        public Action<string, string> ShowError { get; set; }
-        public bool IsSaving { get; private set; }
-
-        public InventoryViewModel()
+    private ObservableCollection<Book> _books = new();
+    public ObservableCollection<Book> Books
+    {
+        get => _books;
+        set
         {
-            ShouldOpenAddInventoryBalanceCommand = new DelegateCommand(DoOpenAddInventoryBalance, CanOpenAddInventoryBalance);
-            RemoveInventoryBalanceCommand = new DelegateCommand(RemoveInventoryBalance, CanRemoveInventoryBalance);
-            ShouldSaveInventoryBalancesCommand = new DelegateCommand(ShouldSaveInventoryBalances, CanSaveInventoryBalances);
-
-            Stores.Add(new Store() { StoreName = "Loading" });
-
+            _books = value;
+            RaisePropertyChanged();
         }
+    }
 
-        private void ShouldSaveInventoryBalances(object arg) => ShouldSaveInventoryBalancesMessage.Invoke(this, EventArgs.Empty);
-
-        //TODO: Async command call, how?
-        public async Task SaveInventoryBalancesAsync()
+    private Book _selectedBook;
+    public Book SelectedBook
+    {
+        get => _selectedBook;
+        set
         {
-            if (InventoryBalances.Any(i => i.UnitsInStock < 0))
+            _selectedBook = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public DelegateCommand ShouldOpenAddInventoryBalanceCommand { get; }
+    public Action OpenAddInventoryBalance { get; set; }
+
+    public DelegateCommand ShouldAddInventoryBalanceCommand { get; }
+
+    public DelegateCommand RemoveInventoryBalanceCommand { get; }
+
+    public EventHandler ShouldSaveInventoryBalancesMessage { get; set; }
+    public DelegateCommand ShouldSaveInventoryBalancesCommand { get; }
+
+    public Action<string, string> ShowError { get; set; }
+
+    public InventoryViewModel()
+    {
+        ShouldOpenAddInventoryBalanceCommand = new DelegateCommand(DoOpenAddInventoryBalance, CanOpenAddInventoryBalance);
+        RemoveInventoryBalanceCommand = new DelegateCommand(RemoveInventoryBalance, CanRemoveInventoryBalance);
+        ShouldSaveInventoryBalancesCommand = new DelegateCommand(ShouldSaveInventoryBalances, CanSaveInventoryBalances);
+    }
+
+    public void SetMainWindowViewModel(MainWindowViewModel mainWindowViewModel)
+    {
+        this.mainWindowViewModel = mainWindowViewModel;
+    }
+    private void ShouldSaveInventoryBalances(object arg) => ShouldSaveInventoryBalancesMessage.Invoke(this, EventArgs.Empty);
+    public async Task SaveInventoryBalancesAsync()
+    {
+        if (InventoryBalances.Any(i => i.UnitsInStock < 0))
+        {
+            ShowError?.Invoke("Units in stock must be non negative numbers!", "Wrong input!");
+        }
+        else
+        {
+            IsSaving = true;
+
+            await Task.Run(() =>
             {
-                ShowError?.Invoke("Units in stock must be non negative numbers!", "Wrong input!");
-            }
-            else
-            {
-                IsSaving = true;
-                ShouldSaveInventoryBalancesCommand.RaiseCanExecuteChanged();
                 try
                 {
-                    await DataManager.UpdateInventoryBalancesAsync(InventoryBalances.ToList(), SelectedStore.Id);
+                    DataManager.UpdateInventoryBalances(InventoryBalances.ToList(), SelectedStore.Id);
                 }
                 catch (Exception)
                 {
                     ShowError?.Invoke("Couldn't save changes to inventory balances!", "Error!");
                 }
-                IsSaving = false;
-                ShouldSaveInventoryBalancesCommand.RaiseCanExecuteChanged();
-            }
+            });
+
+            IsSaving = false;
         }
+    }
+    private bool CanSaveInventoryBalances(object? arg) => !IsSaving && SelectedStore is not null && InventoryBalancesAreLoadedSuccessfully && StoresAreLoadedSuccessfully;
+    private void RemoveInventoryBalance(object obj)
+    {
+        var inventoryBalancesToRemove = new List<InventoryBalance>();
 
-        private bool CanSaveInventoryBalances(object? arg) => !IsSaving && SelectedStore is not null;
-
-        private void RemoveInventoryBalance(object obj)
+        foreach (var inventoryBalance in SelectedInventoryBalances)
         {
-            var inventoryBalancesToRemove = new List<InventoryBalance>();
-
-            foreach (var inventoryBalance in SelectedInventoryBalances)
-            {
-                inventoryBalancesToRemove.Add((InventoryBalance)inventoryBalance);
-            }
-
-            for (int i = 0; i < inventoryBalancesToRemove.Count; i++)
-            {
-                InventoryBalances.Remove(inventoryBalancesToRemove[i]);
-            }
-
-            ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
+            inventoryBalancesToRemove.Add((InventoryBalance)inventoryBalance);
         }
 
-        private bool CanRemoveInventoryBalance(object? args) => SelectedInventoryBalances.Count > 0;
-
-
-        public void AddInventoryBalance(int unitsInStock)
+        for (int i = 0; i < inventoryBalancesToRemove.Count; i++)
         {
-            InventoryBalances.Add(new InventoryBalance() { Book = SelectedBook, Isbn13 = SelectedBook.Isbn13, Store = SelectedStore, StoreId = SelectedStore.Id, UnitsInStock = unitsInStock });
-            isPossibleToAddBooks = InventoryBalances.Count < numberOfBooksInCatalog ? true : false;
-            ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
+            InventoryBalances.Remove(inventoryBalancesToRemove[i]);
         }
-        private void DoOpenAddInventoryBalance(object obj) => OpenAddInventoryBalance?.Invoke();
 
-        private bool CanOpenAddInventoryBalance(object? arg) => IsInventoryMode && SelectedStore is not null && InventoryBalances.Count < numberOfBooksInCatalog ? true : false;
+        ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
+    }
+    private bool CanRemoveInventoryBalance(object? args) => SelectedInventoryBalances.Count > 0 && !IsSaving;
+    public void AddInventoryBalance(int unitsInStock)
+    {
+        InventoryBalances.Add(new InventoryBalance() { Book = SelectedBook, Isbn13 = SelectedBook.Isbn13, Store = SelectedStore, StoreId = SelectedStore.Id, UnitsInStock = unitsInStock });
+        isPossibleToAddBooks = InventoryBalances.Count < numberOfBooksInCatalog ? true : false;
+        ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
+    }
+    private void DoOpenAddInventoryBalance(object obj) => OpenAddInventoryBalance?.Invoke();
+    private bool CanOpenAddInventoryBalance(object? arg) =>
+        IsInventoryMode &&
+        SelectedStore is not null &&
+        !IsSaving &&
+        StoresAreLoadedSuccessfully
+        && InventoryBalancesAreLoadedSuccessfully
+        && InventoryBalances.Count < numberOfBooksInCatalog ? true : false;
+    public async Task GetAndSetStoresAsync()
+    {
+        SetStoresToMessage("Loading");
+        StoresAreLoadedSuccessfully = false;
 
-        public async Task GetAndSetBooksForInventoryView()
+        await Task.Run(() =>
         {
             try
             {
-                var books = await DataManager.GetBooksAsync();
+                Stores = new ObservableCollection<Store>(DataManager.GetStores());
+            }
+            catch (Exception)
+            {
+                SetStoresToMessage("Couldn't load stores");
+                ShowError?.Invoke("Couldn't load stores", "Error!");
+                return;
+            }
+        });
+
+        StoresAreLoadedSuccessfully = true;
+    }
+    private void SetStoresToMessage(string message)
+    {
+        Stores = new ObservableCollection<Store>() { new Store() { StoreName = message } };
+    }
+    public async Task GetAndSetInventoryBalancesAsync(Store store)
+    {
+        SetInventoryBalancesToMessage("Loading");
+        InventoryBalancesAreLoadedSuccessfully = false;
+        await Task.Run(() =>
+        {
+            try
+            {
+                InventoryBalances = new ObservableCollection<InventoryBalance>(DataManager.GetInventoryBalancesForStore(store));
+            }
+            catch (Exception)
+            {
+                SetInventoryBalancesToMessage("Couldn't load inventory balances");
+
+                ShowError?.Invoke("Couldn't load Inventory balances for store", "Error!");
+                return;
+            }
+        });
+
+        InventoryBalancesAreLoadedSuccessfully = true;
+    }
+    private void SetInventoryBalancesToMessage(string message)
+    {
+        InventoryBalances = new ObservableCollection<InventoryBalance>()
+        {
+            new InventoryBalance() { Book = new Book() { Title = message } }
+        };
+    }
+    public async Task GetAndSetBooksForInventoryView()
+    {
+        await Task.Run(() =>
+        {
+            try
+            {
+                var books = DataManager.GetBooksForInventory();
 
                 numberOfBooksInCatalog = books.Count;
 
@@ -233,67 +306,13 @@ namespace Bookstore_App.Presentation.ViewModel
                 SelectedBook = Books.FirstOrDefault();
 
                 isPossibleToAddBooks = InventoryBalances.Count < numberOfBooksInCatalog ? true : false;
-                ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
             }
             catch (Exception ex)
             {
                 ShowError?.Invoke("Couldn't load book catalog", "Error!");
             }
-        }
-        //TODO: Invoke Event to show messagebox with eventargs with message to show (taken from exception message?)
+        });
 
-        //TODO: Make async / Command for main menu
-        public async Task GetAndSetStoresAsync()
-        {
-            //TODO: FIX ERROR HANDLING
-            try
-            {
-                Stores = new ObservableCollection<Store>(await DataManager.GetStoresAsync());
-            }
-            catch (Exception ex)
-            {
-                ShowError?.Invoke("Couldn't load stores", "Error!");
-            }
-
-            if (Stores.Count == 0)
-            {
-                Stores.Add(new Store() { StoreName = "Couldn't load stores" });
-                ShowError?.Invoke("Couldn't load stores", "Error!");
-                StoresAreLoadedSuccessfully = false;
-            }
-            else
-            {
-                StoresAreLoadedSuccessfully = true;
-            }
-        }
-        //TODO: Invoke Event to show messagebox with eventargs with message to show (taken from exception message?)
-
-        //TODO: Make async! 
-        public async Task GetAndSetInventoryBalancesAsync(Store store)
-        {
-            try
-            {
-                var defaultInventoryBalance = new InventoryBalance() { Book = new Book() { Title = "Loading" } };
-                InventoryBalances = new ObservableCollection<InventoryBalance>() { defaultInventoryBalance };
-
-
-                ObservableCollection<InventoryBalance> newInventoryBalances = new();
-
-                var inventoryBalances = await DataManager.GetInventoryBalancesAsync(store);
-
-                foreach (var inventoryBalance in inventoryBalances)
-                {
-                    newInventoryBalances.Add(inventoryBalance);
-                }
-
-                InventoryBalances = newInventoryBalances;
-            }
-            catch (Exception ex)
-            {
-
-                ShowError?.Invoke("Couldn't load Inventory balances for store", "Error!");
-            }
-
-        }
+        ShouldOpenAddInventoryBalanceCommand.RaiseCanExecuteChanged();
     }
 }

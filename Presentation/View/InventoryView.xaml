@@ -96,6 +96,7 @@
             </Grid>
 
             <customElements:MultiSelectDataGrid Grid.Row="1"
+                                                IsEnabled="{Binding InventoryBalancesAreLoadedSuccessfully}"
                                                 ItemsSource="{Binding InventoryBalances}"
                                                 SelectedItemsList="{Binding SelectedInventoryBalances, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                 AutoGenerateColumns="False"

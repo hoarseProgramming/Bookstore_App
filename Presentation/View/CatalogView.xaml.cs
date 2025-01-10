@@ -18,7 +18,7 @@ namespace Bookstore_App.Presentation.View
         {
             if (this.IsEnabled == true)
             {
-                await (DataContext as CatalogViewModel)?.GetAndSetBooksForCatalogView();
+                await (DataContext as CatalogViewModel)?.GetAndSetBooksForCatalogViewAsync();
             }
         }
 

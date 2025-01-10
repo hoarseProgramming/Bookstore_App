@@ -8,6 +8,8 @@ namespace Bookstore_App.Presentation.ViewModel
 {
     internal class CatalogViewModel : ViewModelBase
     {
+        private MainWindowViewModel mainWindowViewModel;
+
         private bool _isCatalogMode = false;
         public bool IsCatalogMode
         {
@@ -43,6 +45,19 @@ namespace Bookstore_App.Presentation.ViewModel
             }
         }
 
+        private bool _catalogIsLoadedSuccessfully = false;
+        public bool CatalogIsLoadedSuccessfully
+        {
+            get => _catalogIsLoadedSuccessfully;
+            set
+            {
+                _catalogIsLoadedSuccessfully = value;
+                OpenAddBookCommand.RaiseCanExecuteChanged();
+                OpenEditAuthorsCommand.RaiseCanExecuteChanged();
+                RaisePropertyChanged();
+            }
+        }
+
         private ObservableCollection<BookViewModel> _books = new();
         public ObservableCollection<BookViewModel> Books
         {
@@ -68,7 +83,6 @@ namespace Bookstore_App.Presentation.ViewModel
         private IList _selectedBooks = new ArrayList();
 
         public IList SelectedBooks
-
         {
             get => _selectedBooks;
             set
@@ -369,6 +383,11 @@ namespace Bookstore_App.Presentation.ViewModel
 
         }
 
+        public void SetMainWindowViewModel(MainWindowViewModel mainWindowViewModel)
+        {
+            this.mainWindowViewModel = mainWindowViewModel;
+        }
+
         private void DoOpenEditBook(object obj)
         {
             IsEditingBook = true;
@@ -405,14 +424,16 @@ namespace Bookstore_App.Presentation.ViewModel
 
             ActiveBook.ReleaseDate = new DateOnly(Int32.Parse(Year), Int32.Parse(Month), Int32.Parse(Day));
 
-
-            ActiveBook.SubCategories.Clear();
-            ActiveBook.SubCategories.Add(SelectedSubCategory);
-
-            DataManager.AddNewSubcategoryToBook(bookToEdit, SelectedSubCategory);
+            if (!ActiveBook.SubCategories.Any(s => s.Id == SelectedSubCategory.Id))
+            {
+                bookToEdit.SubCategories = ActiveBook.SubCategories;
+                DataManager.AddNewSubcategoryToBook(bookToEdit, SelectedSubCategory);
+            }
 
             DataManager.UpdateBook(bookToEdit);
 
+            ActiveBook.SubCategories.Clear();
+            ActiveBook.SubCategories.Add(SelectedSubCategory);
         }
         public void StopEditing()
         {
@@ -442,7 +463,7 @@ namespace Bookstore_App.Presentation.ViewModel
             DataManager.UpdateAuthor(SelectedAuthor);
 
             //TODO: NEEDED?
-            await GetAndSetBooksForCatalogView();
+            await GetAndSetBooksForCatalogViewAsync();
             SelectedAuthor = Authors.FirstOrDefault();
 
         }
@@ -461,7 +482,7 @@ namespace Bookstore_App.Presentation.ViewModel
             OpenEditAuthors?.Invoke();
         }
 
-        private bool CanOpenEditAuthors(object? arg) => IsCatalogMode && !IsSaving;
+        private bool CanOpenEditAuthors(object? arg) => IsCatalogMode && CatalogIsLoadedSuccessfully && !IsSaving;
 
         //TODO: FIX! //Isediting?
         private void AddAuthorToBook(object obj)
@@ -520,19 +541,36 @@ namespace Bookstore_App.Presentation.ViewModel
             //SelectedAuthors.Clear();
         }
 
-        private bool CanOpenAddBook(object? arg) => IsCatalogMode && !IsSaving;
-        public async Task GetAndSetBooksForCatalogView()
+        private bool CanOpenAddBook(object? arg) => IsCatalogMode && CatalogIsLoadedSuccessfully && !IsSaving;
+        public async Task GetAndSetBooksForCatalogViewAsync()
         {
-            var cataloginfo = await DataManager.GetCatalogInfoAsync();
+            CatalogIsLoadedSuccessfully = false;
 
-            Books = cataloginfo.Books;
-            Languages = cataloginfo.Languages;
-            Authors = cataloginfo.Authors;
-            SubCategories = cataloginfo.SubCategories;
-            PrimaryAudiences = cataloginfo.PrimaryAudiences;
-            PublishingHouses = cataloginfo.PublishingHouses;
+            bool loadedSuccessfully = false;
+            await Task.Run(() =>
+            {
+                try
+                {
+                    var cataloginfo = DataManager.GetCatalogInfo();
 
-            SetNewActiveBookAndResetInput();
+                    Books = cataloginfo.Books;
+                    Languages = cataloginfo.Languages;
+                    Authors = cataloginfo.Authors;
+                    SubCategories = cataloginfo.SubCategories;
+                    PrimaryAudiences = cataloginfo.PrimaryAudiences;
+                    PublishingHouses = cataloginfo.PublishingHouses;
+                    loadedSuccessfully = true;
+
+                    SetNewActiveBookAndResetInput();
+                }
+                catch (Exception)
+                {
+                    ShowError.Invoke("Couldn't load catalog", "Error!");
+                    loadedSuccessfully = false;
+                }
+            });
+            //TODO: Fix this not able to call from other thread
+            CatalogIsLoadedSuccessfully = loadedSuccessfully;
         }
 
         public bool GetBookInputIsCorrect()
@@ -739,9 +777,8 @@ namespace Bookstore_App.Presentation.ViewModel
             {
                 Books.Remove(booksToRemove[i]);
             }
-
         }
 
-        private bool CanRemoveBook(object? arg) => IsCatalogMode && SelectedBooks is not null;
+        private bool CanRemoveBook(object? arg) => IsCatalogMode && SelectedBooks.Count > 0;
     }
 }
