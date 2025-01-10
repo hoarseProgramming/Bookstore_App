@@ -9,38 +9,29 @@ namespace Bookstore_App.Services
 {
     internal static class DataManager
     {
-        public static async Task<List<Store>> GetStoresAsync()
+        public static List<Store> GetStores()
         {
             //TODO: Track start and end of operation, add debuginfo, FIX ERROR HANDLING
 
             var stores = new List<Store>();
 
-            await Task.Run(() =>
-            {
-                using var db = new BookstoreCompanyContext();
-                try
-                {
-                    stores = db.Stores.ToList();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine("Failed to get stores");
-                }
-            });
+            using var db = new BookstoreCompanyContext();
+
+            stores = db.Stores.ToList();
 
             return stores;
         }
 
-        public static async Task<List<InventoryBalance>> GetInventoryBalancesAsync(Store store)
+        public static List<InventoryBalance> GetInventoryBalancesForStore(Store store)
         {
             using var db = new BookstoreCompanyContext();
 
-            var inventoryBalances = await db.InventoryBalances
+            var inventoryBalances = db.InventoryBalances
                 .Include(i => i.Store)
                 .Include(i => i.Book)
                 .ThenInclude(b => b.Authors)
                 .Where(i => i.Store.Equals(store))
-                .ToListAsync();
+                .ToList();
 
             return inventoryBalances;
         }
@@ -61,20 +52,18 @@ namespace Bookstore_App.Services
             await db.SaveChangesAsync();
         }
 
-        public static async Task<List<Book>> GetBooksAsync()
+        public static List<Book> GetBooksForInventory()
         {
             using var db = new BookstoreCompanyContext();
 
-            var books = await db.Books.Include(b => b.Authors).ToListAsync();
-
-            return books;
+            return db.Books.Include(b => b.Authors).ToList();
         }
 
-        public static async Task UpdateInventoryBalancesAsync(List<InventoryBalance> updatedInventoryBalances, int id)
+        public static void UpdateInventoryBalances(List<InventoryBalance> updatedInventoryBalances, int id)
         {
             using var db = new BookstoreCompanyContext();
 
-            var inventoryBalances = await db.InventoryBalances.Where(i => i.StoreId == id).ToListAsync();
+            var inventoryBalances = db.InventoryBalances.Where(i => i.StoreId == id).ToList();
 
             foreach (var inventoryBalance in inventoryBalances)
             {
@@ -103,16 +92,15 @@ namespace Bookstore_App.Services
                 }
             }
 
-            await db.SaveChangesAsync();
-
+            db.SaveChanges();
         }
 
-        public static async Task<CatalogInfo> GetCatalogInfoAsync()
+        public static CatalogInfo GetCatalogInfo()
         {
             using var db = new BookstoreCompanyContext();
 
             var books = new ObservableCollection<BookViewModel>
-                (await db.Books
+                (db.Books
                 .Include(b => b.SubCategories)
                 .ThenInclude(s => s.MajorCategory)
                 .Include(b => b.Authors)
@@ -124,27 +112,26 @@ namespace Bookstore_App.Services
                 .ThenInclude(c => c.Country)
                 .Include(b => b.InventoryBalances)
                 .Select(o => new BookViewModel(o))
-                .ToListAsync()
+                .ToList()
                 );
 
-            var authors = new ObservableCollection<Author>(await db.Authors.ToListAsync());
+            var authors = new ObservableCollection<Author>(db.Authors.ToList());
 
-            var subCategories = new ObservableCollection<SubCategory>(await db.SubCategories.Include(s => s.MajorCategory).ToListAsync());
+            var subCategories = new ObservableCollection<SubCategory>(db.SubCategories.Include(s => s.MajorCategory).ToList());
 
-            var languages = new ObservableCollection<Language>(await db.Languages.ToListAsync());
+            var languages = new ObservableCollection<Language>(db.Languages.ToList());
 
-            var primaryAudiences = new ObservableCollection<PrimaryAudience>(await db.PrimaryAudiences.ToListAsync());
+            var primaryAudiences = new ObservableCollection<PrimaryAudience>(db.PrimaryAudiences.ToList());
 
             var publishingHouses = new ObservableCollection<PublishingHouse>
-                (await db.PublishingHouses
+                (db.PublishingHouses
                 .Include(p => p.Address)
                 .ThenInclude(a => a.City)
                 .ThenInclude(c => c.Country)
-                .ToListAsync()
+                .ToList()
                 );
 
             return new CatalogInfo(books, authors, subCategories, languages, primaryAudiences, publishingHouses);
-
         }
 
         public static void UpdateBook(Book book)
